@@ -1,0 +1,27 @@
+#!/bin/bash
+
+IMAGE=yokogawa/jenkins
+NAME=jenkins
+NETWORK=localservice
+
+set -x
+
+if docker network inspect -f "{{.Id}}" ${NETWORK} >/dev/null 2>&1; then
+    :
+else
+    docker network create ${NETWORK}
+fi
+
+docker rm ${NAME}
+docker run \
+    --detach=true \
+    --name=${NAME} \
+    --restart=always \
+    --volume=/var/jenkins_home:/var/jenkins_home \
+    --volume=/var/run/docker.sock:/var/run/docker.sock \
+    --volume=/dev/urandom:/dev/random \
+    --network ${NETWORK} \
+    --env=JAVA_OPTS="-Djava.awt.headless=true -Dorg.apache.commons.jelly.tags.fmt.timeZone=Asia/Tokyo -Dfile.encoding=UTF-8" \
+    ${IMAGE} 
+
+#    --publish=50000:50000 \

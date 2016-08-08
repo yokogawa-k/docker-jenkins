@@ -1,0 +1,28 @@
+# vi: set ft=yaml ts=2 sw=2 sts=0 et:
+
+version: '2'
+
+services:
+  jenkins:
+    build: .
+    container_name: jenkins
+    restart: always
+    volumes:
+      - /var/jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/urandom:/dev/random
+    environment:
+      - JAVA_OPTS="-Djava.awt.headless=true -Dorg.apache.commons.jelly.tags.fmt.timeZone=Asia/Tokyo -Dfile.encoding=UTF-8"
+    networks:
+      jenkins_net:
+        ipv4_address: 172.16.241.2
+
+networks:
+  jenkins_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.241.0/24
+          gateway: 172.16.241.1
+
