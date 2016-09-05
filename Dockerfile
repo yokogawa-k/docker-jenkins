@@ -14,7 +14,6 @@ RUN sh -ex \
             make \
             go \
             go-tools \
-            go-cross \
             tzdata \
         && cp -f /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
         && apk del tzdata
