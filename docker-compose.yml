@@ -9,20 +9,26 @@ services:
     restart: always
     volumes:
       - /var/jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
       - /dev/urandom:/dev/random
     environment:
       - JAVA_OPTS='-Djava.awt.headless=true -Duser.timezone=Asia/Tokyo -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8'
+      - DOCKER_HOST=tcp://dind:2375
+      - VIRTUAL_HOST=jenkins.toraja.klab.org
+      - VIRTUAL_PORT=8080
     networks:
-      jenkins_net:
-        ipv4_address: 172.16.241.2
+      default:
+      bridge:
+  dind:
+    image: docker:dind
+    container_name: dind
+    privileged: true
+    restart: always
+    volumes:
+      - ./dind:/var/lib/docker
 
 networks:
-  jenkins_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.16.241.0/24
-          gateway: 172.16.241.1
+  default:
+  bridge:
+    external:
+      name: dockernginxproxy_default
 

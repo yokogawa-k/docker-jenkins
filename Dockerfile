@@ -22,6 +22,7 @@ RUN sh -ex \
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN go get -u github.com/golang/lint/golint
 
 # timezone
 RUN echo 'Asia/Tokyo' > /etc/timezone
@@ -29,7 +30,7 @@ RUN echo 'Asia/Tokyo' > /etc/timezone
 # docker
 RUN curl -L https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz | tar xzf - docker/docker \
  && mv docker/docker /usr/local/bin/docker \
- && curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose \
+ && curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose \
  && chmod -v +x /usr/local/bin/docker /usr/local/bin/docker-compose
 
 USER jenkins
