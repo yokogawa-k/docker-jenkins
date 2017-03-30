@@ -15,6 +15,7 @@ RUN sh -ex \
             go \
             go-tools \
             tzdata \
+            musl-dev \
         && cp -f /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
         && apk del tzdata
 
