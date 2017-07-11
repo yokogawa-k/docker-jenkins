@@ -25,6 +25,7 @@ services:
     restart: always
     volumes:
       - ./dind:/var/lib/docker
+      - /var/jenkins_home:/var/jenkins_home
 
 networks:
   default:

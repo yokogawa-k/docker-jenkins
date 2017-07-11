@@ -1,25 +1,33 @@
-FROM jenkins:alpine
-MAINTAINER yokogawa-k "yokogawa-k@klab.com"
+FROM jenkinsci/jenkins
 
 USER root
 RUN set -ex \
-        && delgroup ping \
-        && addgroup -g 999 docker \
-        && deluser jenkins \
-        && addgroup -g 9001 jenkins \
-        && adduser -h "${JENKINS_HOME}" -u 9001 -G jenkins -s /bin/bash -D jenkins \
-        && addgroup jenkins docker
+        && userdel jenkins \
+        && groupadd -g 9001 jenkins \
+        && useradd -d "${JENKINS_HOME}" -u 9001 -g jenkins -s /bin/bash jenkins \
+        && chown -R jenkins "${JENKINS_HOME}" /usr/share/jenkins/ref
 RUN sh -ex \
-        && apk add --no-cache \
+        && apt-get update \
+        && apt-get install -y --no-install-recommends \
+            g++ \
+            gcc \
+            libc6-dev \
             make \
-            go \
-            go-tools \
-            tzdata \
-            musl-dev \
-        && cp -f /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
-        && apk del tzdata
+            pkg-config \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/
 
 # golang
+ENV GOLANG_VERSION 1.8.3
+ENV GOREL_SHA256 1862f4c3d3907e59b04a757cfda0ea7aa9ef39274af99a784f5be843c80c6772
+
+RUN set -eux \
+        && wget -O go.tgz https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz \
+        && echo "${GOREL_SHA256} *go.tgz" | sha256sum -c - \
+        && tar -C /usr/local -xzf go.tgz \
+        && rm -f go.tgz \
+        && /usr/local/go/bin/go version
+
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
