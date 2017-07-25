@@ -1,4 +1,4 @@
-FROM jenkinsci/jenkins
+FROM jenkins/jenkins
 
 USER root
 RUN set -ex \
@@ -37,9 +37,10 @@ RUN go get -u github.com/golang/lint/golint
 RUN echo 'Asia/Tokyo' > /etc/timezone
 
 # docker
+ENV DOCKER_COMPOSE_VERSION 1.14.0
 RUN curl -L https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz | tar xzf - docker/docker \
  && mv docker/docker /usr/local/bin/docker \
- && curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose \
+ && curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose \
  && chmod -v +x /usr/local/bin/docker /usr/local/bin/docker-compose
 
 USER jenkins
